@@ -153,58 +153,63 @@ function weightedPick(){
 document.getElementById('spinBtn').addEventListener('click',spin);
 canvas.addEventListener('dblclick',()=>{ renderSettings(); document.getElementById('settingsModal').classList.add('open'); });
 
-function spin(){
-  if(isSpinning) return;
-  const pick=weightedPick();
-  if(!pick){ alert('No enabled items. Enable some in settings.'); return; }
-
-  const sliceRad=(2*Math.PI)/N;
-  const targetIdx=items.findIndex(it=>it.id===pick.id);
-  const targetStart=targetIdx*sliceRad;
-  const offset=Math.random()*sliceRad;
-  const winAngle=targetStart+offset;
-
-  const pointerRad=POINTER_DEG*Math.PI/180;
-  const spins=(5+Math.floor(Math.random()*3))*(2*Math.PI);
-  const targetRotation=spins+(pointerRad-winAngle);
-
-  const startRotation=currentRotation;
-  const delta=targetRotation-startRotation;
-  const duration=4000+Math.random()*600;
-  const startTime=performance.now();
-  prevTime=startTime;
-  prevSliceIdx=null;
-
-  isSpinning=true;
-  document.getElementById('spinBtn').disabled=true;
-  document.getElementById('result').textContent='';
-  if(rafId) cancelAnimationFrame(rafId);
-
-  function easeOut(t){ return 1-Math.pow(1-t,3.5); }
-
-  function frame(now){
-    const elapsed=now-startTime;
-    const t=Math.min(1,elapsed/duration);
-    const eased=easeOut(t);
-    const newRot=startRotation+delta*eased;
-    const dt=Math.min((now-prevTime)/1000,0.05);
-    const wheelAngVel=(newRot-currentRotation)/Math.max(dt,1e-4);
-    currentRotation=newRot;
-    drawWheel(currentRotation);
-    applyPointerPhysics(dt, wheelAngVel);
-    prevTime=now;
-    if(t<1){
-      rafId=requestAnimationFrame(frame);
-    } else {
-      isSpinning=false;
-      document.getElementById('spinBtn').disabled=false;
-      document.getElementById('result').textContent=`Selected: ${pick.id}`;
-      settlePointer();
-      rafId=null;
+function spin() {
+    if (isSpinning) return;
+    const pick = weightedPick();
+    if (!pick) {
+      alert('No enabled items. Enable some in settings.');
+      return;
     }
+  
+    const sliceRad = (2 * Math.PI) / N;
+    const targetIdx = items.findIndex(it => it.id === pick.id);
+    const targetStart = targetIdx * sliceRad;
+    const offset = Math.random() * sliceRad;
+    const winAngle = targetStart + offset;
+  
+    const pointerRad = POINTER_DEG * Math.PI / 180;
+    const spins = 5 * (2 * Math.PI); // Always spin at least 5 full rotations
+    const targetRotation = spins + (pointerRad - winAngle);
+  
+    const startRotation = currentRotation % (2 * Math.PI); // Normalize current rotation
+    const delta = targetRotation - startRotation + (startRotation > targetRotation ? 2 * Math.PI : 0); // Ensure positive delta
+    const duration = 4000 + Math.random() * 600; // Duration of the spin
+    const startTime = performance.now();
+    prevTime = startTime;
+    prevSliceIdx = null;
+  
+    isSpinning = true;
+    document.getElementById('spinBtn').disabled = true;
+    document.getElementById('result').textContent = '';
+    if (rafId) cancelAnimationFrame(rafId);
+  
+    function easeOut(t) {
+      return 1 - Math.pow(1 - t, 3.5); // Ease-out effect for smooth stopping
+    }
+  
+    function frame(now) {
+      const elapsed = now - startTime;
+      const t = Math.min(1, elapsed / duration);
+      const eased = easeOut(t);
+      const newRot = startRotation + delta * eased;
+      const dt = Math.min((now - prevTime) / 1000, 0.05);
+      const wheelAngVel = (newRot - currentRotation) / Math.max(dt, 1e-4);
+      currentRotation = newRot;
+      drawWheel(currentRotation);
+      applyPointerPhysics(dt, wheelAngVel);
+      prevTime = now;
+      if (t < 1) {
+        rafId = requestAnimationFrame(frame);
+      } else {
+        isSpinning = false;
+        document.getElementById('spinBtn').disabled = false;
+        document.getElementById('result').textContent = `Selected: ${pick.id}`;
+        settlePointer();
+        rafId = null;
+      }
+    }
+    rafId = requestAnimationFrame(frame);
   }
-  rafId=requestAnimationFrame(frame);
-}
 
 const modal=document.getElementById('settingsModal');
 document.getElementById('settingsBtn').addEventListener('click',()=>{ renderSettings(); modal.classList.add('open'); });

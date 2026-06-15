@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wheel of Names (1-24)</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <div class="wheel-wrap">
+      <canvas id="wheelCanvas"></canvas>
+      <div id="pointer-wrap">
+        <div id="pointer-shadow"></div>
+        <div id="pointer-el"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <button id="spinBtn">Spin</button>
+      <div id="result"></div>
+    </div>
+  </div>
+  <button id="settingsBtn" title="Settings">⚙️</button>
+  <div id="settingsModal" class="modal-bg">
+    <div class="modal-box">
+      <h2>Settings</h2>
+      <div class="settings-actions">
+        <button id="enableAll">Enable all</button>
+        <button id="disableAll">Disable all</button>
+        <button id="resetWeights">Reset weights</button>
+      </div>
+      <div id="itemsList" class="items-list"></div>
+      <div class="modal-footer">
+        <button id="saveSettings">Save</button>
+        <button id="closeSettings">Close</button>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

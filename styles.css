@@ -1,32 +1,250 @@
-*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif}
-html,body{height:100%;background:linear-gradient(160deg,#f0f4fb,#e8eef7);color:#233}
-#app{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;padding:20px;gap:18px}
-.wheel-wrap{position:relative;width:min(580px,90vw);height:min(580px,90vw)}
-#wheelCanvas{border-radius:50%;display:block;width:100%;height:100%;box-shadow:0 12px 40px rgba(35,50,80,0.10)}
-#pointer-wrap{position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:32px;display:flex;flex-direction:column;align-items:center;transform-origin:50% calc(100% + 4px)}
-#pointer-shadow{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:28px solid rgba(0,0,0,0.12);filter:blur(3px)}
-#pointer-el{width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-bottom:28px solid #c0392b;position:relative;z-index:1;filter:drop-shadow(0 3px 5px rgba(160,40,30,0.30))}
-.controls{display:flex;gap:14px;align-items:center}
-#spinBtn{padding:11px 30px;font-size:16px;font-weight:500;cursor:pointer;background:#3b82f6;color:#fff;border:none;border-radius:10px;box-shadow:0 4px 14px rgba(59,130,246,0.28);transition:background 0.15s,transform 0.1s}
-#spinBtn:hover{background:#2563eb}
-#spinBtn:active{transform:translateY(1px)}
-#spinBtn:disabled{background:#93c5fd;cursor:not-allowed;transform:none}
-#result{min-width:160px;text-align:center;font-size:17px;font-weight:600;color:#2b3946}
-#settingsBtn{position:fixed;right:18px;bottom:18px;width:54px;height:54px;border-radius:50%;background:#fff;color:#2b3946;border:1px solid rgba(43,57,70,0.10);font-size:22px;cursor:pointer;box-shadow:0 4px 14px rgba(43,57,70,0.08);transition:background 0.15s}
-#settingsBtn:hover{background:#f0f4fb}
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(20,28,39,0.45);align-items:center;justify-content:center;z-index:100}
-.modal-bg.open{display:flex}
-.modal-box{background:#fbfdff;width:min(760px,95%);max-height:88vh;overflow-y:auto;padding:20px;border-radius:14px;box-shadow:0 20px 60px rgba(20,28,39,0.12)}
-.modal-box h2{margin:0 0 14px;font-size:18px;font-weight:600;color:#1f2a37}
-.items-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:8px;margin-top:10px}
-.item-row{display:flex;gap:8px;align-items:center;padding:8px 10px;border:1px solid rgba(35,50,80,0.07);border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.7),rgba(248,251,255,0.7))}
-.item-row.disabled{opacity:0.5}
-.item-row label{width:32px;font-weight:700;color:#24323f;font-size:14px}
-.item-row input[type=number]{width:66px;padding:4px 6px;border:1px solid rgba(35,50,80,0.12);border-radius:6px;font-size:13px}
-.settings-actions{display:flex;gap:8px;margin-bottom:10px}
-.settings-actions button{padding:7px 13px;border-radius:8px;border:1px solid rgba(35,50,80,0.08);background:#fff;cursor:pointer;font-size:13px}
-.settings-actions button:hover{background:#f0f4fb}
-.modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
-.modal-footer button{padding:8px 16px;border-radius:8px;border:1px solid rgba(35,50,80,0.08);background:#f0f4fb;cursor:pointer;font-size:14px}
-#saveSettings{background:#3b82f6!important;color:#fff!important;border-color:transparent!important}
-@media(max-width:600px){.wheel-wrap{width:90vw;height:90vw}}
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif
+}
+
+html,
+body {
+    height: 100%;
+    background: linear-gradient(160deg, #f0f4fb, #e8eef7);
+    color: #233
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 20px;
+    gap: 18px
+}
+
+.wheel-wrap {
+    position: relative;
+    width: min(580px, 90vw);
+    height: min(580px, 90vw)
+}
+
+#wheelCanvas {
+    border-radius: 50%;
+    display: block;
+    width: 100%;
+    height: 100%;
+    box-shadow: 0 12px 40px rgba(35, 50, 80, 0.10)
+}
+
+#pointer-wrap {
+    position: absolute;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform-origin: 50% calc(100% + 4px);
+}
+
+#pointer-shadow {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 28px solid rgba(0, 0, 0, 0.12);
+    filter: blur(3px)
+}
+
+#pointer-el {
+  width: 0;
+  height: 0;
+  border-left: 13px solid transparent;
+  border-right: 13px solid transparent;
+  border-bottom: 28px solid #c0392b;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 3px 5px rgba(160, 40, 30, 0.30));
+  transform: rotate(180deg); /* Rotate the pointer 180 degrees */
+}
+
+.controls {
+    display: flex;
+    gap: 14px;
+    align-items: center
+}
+
+#spinBtn {
+    padding: 11px 30px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.28);
+    transition: background 0.15s, transform 0.1s
+}
+
+#spinBtn:hover {
+    background: #2563eb
+}
+
+#spinBtn:active {
+    transform: translateY(1px)
+}
+
+#spinBtn:disabled {
+    background: #93c5fd;
+    cursor: not-allowed;
+    transform: none
+}
+
+#result {
+    min-width: 160px;
+    text-align: center;
+    font-size: 17px;
+    font-weight: 600;
+    color: #2b3946
+}
+
+#settingsBtn {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: #fff;
+    color: #2b3946;
+    border: 1px solid rgba(43, 57, 70, 0.10);
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(43, 57, 70, 0.08);
+    transition: background 0.15s
+}
+
+#settingsBtn:hover {
+    background: #f0f4fb
+}
+
+.modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 28, 39, 0.45);
+    align-items: center;
+    justify-content: center;
+    z-index: 100
+}
+
+.modal-bg.open {
+    display: flex
+}
+
+.modal-box {
+    background: #fbfdff;
+    width: min(760px, 95%);
+    max-height: 88vh;
+    overflow-y: auto;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(20, 28, 39, 0.12)
+}
+
+.modal-box h2 {
+    margin: 0 0 14px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2a37
+}
+
+.items-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+    gap: 8px;
+    margin-top: 10px
+}
+
+.item-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 10px;
+    border: 1px solid rgba(35, 50, 80, 0.07);
+    border-radius: 8px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(248, 251, 255, 0.7))
+}
+
+.item-row.disabled {
+    opacity: 0.5
+}
+
+.item-row label {
+    width: 32px;
+    font-weight: 700;
+    color: #24323f;
+    font-size: 14px
+}
+
+.item-row input[type=number] {
+    width: 66px;
+    padding: 4px 6px;
+    border: 1px solid rgba(35, 50, 80, 0.12);
+    border-radius: 6px;
+    font-size: 13px
+}
+
+.settings-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px
+}
+
+.settings-actions button {
+    padding: 7px 13px;
+    border-radius: 8px;
+    border: 1px solid rgba(35, 50, 80, 0.08);
+    background: #fff;
+    cursor: pointer;
+    font-size: 13px
+}
+
+.settings-actions button:hover {
+    background: #f0f4fb
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px
+}
+
+.modal-footer button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(35, 50, 80, 0.08);
+    background: #f0f4fb;
+    cursor: pointer;
+    font-size: 14px
+}
+
+#saveSettings {
+    background: #3b82f6 !important;
+    color: #fff !important;
+    border-color: transparent !important
+}
+
+@media(max-width:600px) {
+    .wheel-wrap {
+        width: 90vw;
+        height: 90vw
+    }
+}
